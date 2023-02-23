@@ -23,7 +23,22 @@ public class Server {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             String response = readResponse();
-            if (!response.startsWith("220 ")) throw new RuntimeException("Unknown response connecting: " + response);
+            if (!response.startsWith("220 ")) throw new RuntimeException("FTP server connection failed: " + response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void login(String login, String pass) {
+        if (Objects.isNull(login)) throw new RuntimeException("login cannot be empty");
+        if (Objects.isNull(pass)) throw new RuntimeException("pass cannot be empty");
+        try {
+            sendCommand(Command.USER, login);
+            String response = readResponse();
+            if (!response.startsWith("331 ")) throw new RuntimeException("FTP server invalid login: " + response);
+            sendCommand(Command.PASS, pass);
+            response = readResponse();
+            if (!response.startsWith("230 ")) throw new RuntimeException("FTP server invalid password: " + response);
         } catch (Exception e) {
             e.printStackTrace();
         }
