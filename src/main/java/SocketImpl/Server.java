@@ -7,6 +7,7 @@ import java.util.Objects;
 
 
 public class Server {
+    public static final int DEFAULT_PORT = 21;
     private Socket socket = null;
 
     private BufferedReader reader = null;
@@ -14,6 +15,19 @@ public class Server {
     private BufferedWriter writer = null;
 
     private static boolean DEBUG = true; //TODO REMOVE
+
+    public Server(String host) {
+        if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
+        try {
+            socket = new Socket(host, DEFAULT_PORT);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            String response = readResponse();
+            if (!response.startsWith("220 ")) throw new RuntimeException("Unknown response connecting: " + response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /* method to send commands to ftp server */
     private void sendCommand(Command command, String args) throws IOException {
