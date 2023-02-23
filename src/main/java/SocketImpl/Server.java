@@ -35,10 +35,10 @@ public class Server {
         try {
             sendCommand(Command.USER, login);
             String response = readResponse();
-            if (!response.startsWith("331 ")) throw new RuntimeException("FTP server invalid login: " + response);
+            if (!response.startsWith("331")) throw new RuntimeException("FTP server invalid login: " + response);
             sendCommand(Command.PASS, pass);
             response = readResponse();
-            if (!response.startsWith("230 ")) throw new RuntimeException("FTP server invalid password: " + response);
+            if (!response.startsWith("230")) throw new RuntimeException("FTP server invalid password: " + response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,22 +47,33 @@ public class Server {
     /* method to send commands to ftp server */
     private void sendCommand(Command command, String args) throws IOException {
         if (Objects.isNull(command)) throw new RuntimeException("command null");
-        if (Objects.isNull(args)) throw new RuntimeException("args null");
         if (Objects.isNull(socket) | Objects.isNull(writer)) throw new RuntimeException("server not connected");
+        if (Objects.isNull(args)) throw new RuntimeException("args null");
         final String endCommand = "\r\n";
         final String sep = " ";
-
         String commandLine = command.name() + sep + args + endCommand;
+
         writer.write(commandLine); // "command args \r\n"
         writer.flush();
-        if (DEBUG) System.out.printf("send command -> %s %n", commandLine);
+
+        if (DEBUG) {
+            if (command.equals(Command.USER) || command.equals(Command.PASS)) {
+                final String invisible = "*****";
+                commandLine = command.name() + sep + invisible + endCommand;
+            }
+            System.out.printf("\tsend -> %15s", commandLine);
+        }
     }
+
 
     private String readResponse() throws IOException {
         String response = reader.readLine();
-        if (DEBUG) {
-            System.out.printf("response -> %s %n", response);
+        while (reader.ready()) {
+            response = reader.readLine();
         }
+        if (DEBUG) System.out.printf("response -> %15s%n", response);
         return response;
     }
+
+
 }
