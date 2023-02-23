@@ -6,7 +6,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Server {
@@ -107,6 +111,30 @@ public class Server {
 
             sendCommand(Command.PORT, portCmd.toString());
         }
+    }
+
+    public void enterPassiveMode() throws IOException {
+
+        sendCommand(Command.PASV, "");
+
+        String response = readResponse();
+        if (!response.startsWith("227")) throw new IOException("not request passive mode: " + response);
+
+        Pattern compile = Pattern.compile("\\([\\d,]+\\)");
+        Matcher matcher = compile.matcher(response);
+        if (matcher.find()) {
+            MatchResult matchResult = matcher.toMatchResult();
+            String[] split = response.substring(matchResult.start() + 1, matchResult.end() - 1).split(",");
+
+            String ip = String.join(".", Arrays.copyOfRange(split, 0, 4));
+            int port = (Integer.parseInt(split[4]) * 256) + Integer.parseInt(split[5]);
+        } else {
+            throw new RuntimeException("not found ip");
+        }
+        if (true) throw new RuntimeException("fix");
+
+        //TODO     Socket dataSocket = new Socket(ip, port);
+
     }
 
 }
