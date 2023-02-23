@@ -75,5 +75,13 @@ public class Server {
         return response;
     }
 
+    public synchronized void disconnect() throws IOException {
+        try {
+            sendCommand(Command.QUIT, "");
+        } finally {
+            readResponse();
+            socket = null;
+        }
+    }
 
 }
