@@ -30,12 +30,14 @@ public class Server {
     }
 
     public void login(String login, String pass) {
-        if (Objects.isNull(login)) throw new RuntimeException("login cannot be empty");
-        if (Objects.isNull(pass)) throw new RuntimeException("pass cannot be empty");
+        Objects.requireNonNull(login, "login cannot be empty");
+        Objects.requireNonNull(pass, "pass cannot be empty");
+
         try {
             sendCommand(Command.USER, login);
             String response = readResponse();
             if (!response.startsWith("331")) throw new RuntimeException("FTP server invalid login: " + response);
+
             sendCommand(Command.PASS, pass);
             response = readResponse();
             if (!response.startsWith("230")) throw new RuntimeException("FTP server invalid password: " + response);
@@ -46,9 +48,10 @@ public class Server {
 
     /* method to send commands to ftp server */
     private void sendCommand(Command command, String args) throws IOException {
-        if (Objects.isNull(command)) throw new RuntimeException("command null");
-        if (Objects.isNull(socket) | Objects.isNull(writer)) throw new RuntimeException("server not connected");
-        if (Objects.isNull(args)) throw new RuntimeException("args null");
+        if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
+        Objects.requireNonNull(command, "empty command");
+        Objects.requireNonNull(args, "args null");
+
         final String endCommand = "\r\n";
         final String sep = " ";
         String commandLine = command.name() + sep + args + endCommand;
@@ -67,6 +70,7 @@ public class Server {
 
 
     private String readResponse() throws IOException {
+        Objects.requireNonNull(reader, "server not connected");
         String response = reader.readLine();
         while (reader.ready()) {
             response = reader.readLine();
