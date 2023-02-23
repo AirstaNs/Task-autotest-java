@@ -171,3 +171,7 @@ modules.xml
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 /HELP.md
+
+#Profile credintalis and path files
+/files
+/hosts
