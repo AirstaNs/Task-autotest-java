@@ -1,16 +1,10 @@
 package org.example;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 /**
  * A class that stores data to establish a connection with the server.
@@ -32,27 +26,26 @@ public class Server {
     }
 
 
-    public String download() {
-        try (InputStream is = link.openConnection().getInputStream()) {
-            Path path = Paths.get("students.json");
-            Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
+    public String download(String localFile) {
+        try (BufferedInputStream is = new BufferedInputStream(link.openConnection().getInputStream());
+             FileOutputStream fileOutputStream = new FileOutputStream(localFile, true)) {
+            int i;
+            while ((i = is.read()) != -1) {
+                fileOutputStream.write(i);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public String upload() throws IOException {
+    public String upload(String localFile) throws IOException {
         URLConnection url = link.openConnection();
         url.setDoOutput(true);
-        try (OutputStream is1 = url.getOutputStream()) {
-            String str = "123";
-            OutputStreamWriter osw = new OutputStreamWriter(is1);
-            for (int i = 0; i < str.length(); i++) {
-                osw.append(str.charAt(i));
-                //  osw.write((int) str.charAt(i));
-            }
-            osw.close();
+        try (BufferedOutputStream out = new BufferedOutputStream(url.getOutputStream())) {
+            byte[] bytes = Files.readAllBytes(Paths.get(localFile));
+            out.write(bytes);
+            out.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
