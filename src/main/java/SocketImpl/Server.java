@@ -2,7 +2,10 @@ package SocketImpl;
 
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 
@@ -85,6 +88,24 @@ public class Server {
         } finally {
             readResponse();
             socket = null;
+        }
+    }
+
+    public void enterActiveMode() throws IOException {
+        if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
+        try (ServerSocket activeSocket = new ServerSocket(0)) {
+            byte[] address = socket.getLocalAddress().getAddress();
+            int port = activeSocket.getLocalPort();
+
+            StringBuilder portCmd = new StringBuilder();
+            char delimiter = ',';
+            for (int i = 0; i < 4; i++) {
+                portCmd.append(address[i] & 0xFF);
+                portCmd.append(delimiter);
+            }
+            portCmd.append((port / 256)).append(delimiter).append(port % 256);
+
+            sendCommand(Command.PORT, portCmd.toString());
         }
     }
 
