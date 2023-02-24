@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 public class Server {
     public static final int DEFAULT_PORT = 21;
+    private static final int DEFAULT_TIMEOUT = 7000;
+
     private Socket socket = null;
 
     private ServerSocket active = null;
@@ -40,7 +42,7 @@ public class Server {
         this.socket = socket;
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        socket.setSoTimeout(9000);
+        socket.setSoTimeout(DEFAULT_TIMEOUT);
     }
 
     public synchronized void login(String login, String pass) {
@@ -108,6 +110,9 @@ public class Server {
         }
     }
 
+
+
+
     public synchronized void enterActiveMode() throws IOException {
         if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
         try {
@@ -128,6 +133,7 @@ public class Server {
             String response = readResponse(); // if 500 - not support active mode
 
             active = activeSocket;
+            active.setSoTimeout(DEFAULT_TIMEOUT);
         } catch (Exception e) {
 
         }
@@ -158,6 +164,22 @@ public class Server {
 
     }
 
+    public void downloadFile(String fileName) {
+        try {
+            Socket accept = active.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(accept.getInputStream()));
+            try (FileWriter writer1 = new FileWriter("./files/" + fileName, true)) {
+                int byteCount;
+                char[] bytes = new char[512];
+                while ((byteCount = in.read(bytes, 0, 512)) != -1) {
+                    writer1.write(bytes, 0, byteCount);
+                }
+                writer1.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public synchronized void getFile(String fileName) throws IOException, InterruptedException {
         this.enterActiveMode();
 
@@ -172,20 +194,9 @@ public class Server {
             throw new RuntimeException(messErr);
         }
 
-        try {
-            Socket accept = active.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(accept.getInputStream()));
-            try (FileWriter writer1 = new FileWriter("./files/" + fileName, true)) {
-                int byteCount;
-                char[] bytes = new char[512];
-                while ((byteCount = in.read(bytes, 0, 512)) != -1) {
-                    writer1.write(bytes, 0, byteCount);
-                }
-                writer1.flush();
-                //readResponse();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        downloadFile(fileName);
+        response = readResponse();
+
+
     }
 }
