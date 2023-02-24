@@ -17,6 +17,8 @@ public class Server {
     public static final int DEFAULT_PORT = 21;
     private Socket socket = null;
 
+    private ServerSocket active = null;
+
     private BufferedReader reader = null;
 
     private BufferedWriter writer = null;
@@ -95,9 +97,10 @@ public class Server {
         }
     }
 
-    public void enterActiveMode() throws IOException {
+    public synchronized void enterActiveMode() throws IOException {
         if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
-        try (ServerSocket activeSocket = new ServerSocket(0)) {
+        try {
+            ServerSocket activeSocket = new ServerSocket(0);
             byte[] address = socket.getLocalAddress().getAddress();
             int port = activeSocket.getLocalPort();
 
@@ -110,6 +113,12 @@ public class Server {
             portCmd.append((port / 256)).append(delimiter).append(port % 256);
 
             sendCommand(Command.PORT, portCmd.toString());
+
+            String response = readResponse(); // if 500 - not support active mode
+
+            active = activeSocket;
+        } catch (Exception e) {
+
         }
     }
 
@@ -137,4 +146,34 @@ public class Server {
 
     }
 
+    public synchronized void getFile(String fileName) throws IOException, InterruptedException {
+        this.enterActiveMode();
+
+        sendCommand(Command.RETR, fileName);
+
+        String response = readResponse();
+
+        if (!response.startsWith("150")) {
+            String notFound = "could not be found on the FTP server.";
+            String invalid = "Invalid response from FTP server for file transfer: " + response;
+            String messErr = response.startsWith("550") ? notFound : invalid;
+            throw new RuntimeException(messErr);
+        }
+
+        try {
+            Socket accept = active.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(accept.getInputStream()));
+            try (FileWriter writer1 = new FileWriter("./files/" + fileName, true)) {
+                int byteCount;
+                char[] bytes = new char[512];
+                while ((byteCount = in.read(bytes, 0, 512)) != -1) {
+                    writer1.write(bytes, 0, byteCount);
+                }
+                writer1.flush();
+                //readResponse();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
