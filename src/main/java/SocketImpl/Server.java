@@ -199,4 +199,30 @@ public class Server {
 
 
     }
+
+
+    public synchronized void appendFile1(String fileName) throws IOException, InterruptedException {
+        enterActiveMode();
+
+        sendCommand(Command.APPE, "Aboba.txt"); //STOR - ГРУЗИТЬ БЕЗ . APPE - ДОБАВЛЯТЬ
+        readResponse();
+        uploadFile(("./files/" + fileName), active.accept());
+        readResponse();
+
+    }
+
+    public void uploadFile(String localFilename, Socket dataSocket) throws IOException {
+        Objects.requireNonNull(dataSocket, "not connected");
+
+        try (BufferedOutputStream out = new BufferedOutputStream(dataSocket.getOutputStream()); FileInputStream in = new FileInputStream(localFilename)) {
+
+            byte[] buffer = new byte[1024];
+            int count;
+            while ((count = in.read(buffer)) > 0) {
+                out.write(buffer, 0, count);
+            }
+            out.flush();
+        }
+    }
 }
+
