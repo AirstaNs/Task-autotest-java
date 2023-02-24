@@ -92,12 +92,19 @@ public class Server {
         return response;
     }
 
-    public synchronized void disconnect() throws IOException {
+    public synchronized void disconnect() throws IOException, InterruptedException {
         try {
             sendCommand(Command.QUIT, "");
         } finally {
-            readResponse();
+            Objects.requireNonNull(reader, "server not connected");
+            while (reader.ready()) {
+                System.out.println(reader.readLine());
+                Thread.sleep(500);
+            }
+            if (socket != null) socket.close();
+            if (active != null) active.close();
             socket = null;
+            active = null;
         }
     }
 
