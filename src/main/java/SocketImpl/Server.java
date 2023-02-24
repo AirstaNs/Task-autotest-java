@@ -28,9 +28,7 @@ public class Server {
     public Server(String host) {
         if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
         try {
-            socket = new Socket(host, DEFAULT_PORT);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.setSocket(new Socket(host, DEFAULT_PORT));
             String response = readResponse();
             if (!response.startsWith("220 ")) throw new RuntimeException("FTP server connection failed: " + response);
         } catch (Exception e) {
@@ -38,7 +36,14 @@ public class Server {
         }
     }
 
-    public void login(String login, String pass) {
+    private synchronized void setSocket(Socket socket) throws IOException {
+        this.socket = socket;
+        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        socket.setSoTimeout(9000);
+    }
+
+    public synchronized void login(String login, String pass) {
         Objects.requireNonNull(login, "login cannot be empty");
         Objects.requireNonNull(pass, "pass cannot be empty");
 
@@ -56,7 +61,7 @@ public class Server {
     }
 
     /* method to send commands to ftp server */
-    private void sendCommand(Command command, String args) throws IOException {
+    private synchronized void sendCommand(Command command, String args) throws IOException {
         if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
         Objects.requireNonNull(command, "empty command");
         Objects.requireNonNull(args, "args null");
@@ -77,8 +82,7 @@ public class Server {
         }
     }
 
-
-    private String readResponse() throws IOException {
+    private synchronized String readResponse() throws IOException, InterruptedException {
         Objects.requireNonNull(reader, "server not connected");
         String response = reader.readLine();
         while (reader.ready()) {
@@ -122,7 +126,7 @@ public class Server {
         }
     }
 
-    public void enterPassiveMode() throws IOException {
+    public synchronized void enterPassiveMode() throws IOException, InterruptedException {
 
         sendCommand(Command.PASV, "");
 
@@ -137,6 +141,7 @@ public class Server {
 
             String ip = String.join(".", Arrays.copyOfRange(split, 0, 4));
             int port = (Integer.parseInt(split[4]) * 256) + Integer.parseInt(split[5]);
+            this.setSocket(new Socket(ip, port));
         } else {
             throw new RuntimeException("not found ip");
         }
