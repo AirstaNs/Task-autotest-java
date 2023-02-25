@@ -171,26 +171,21 @@ public class Server {
 
     }
 
-    public void downloadFile(String fileName) {
-        try {
-            Socket accept = active.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(accept.getInputStream()));
-            try (FileWriter writer1 = new FileWriter("./files/" + fileName, true)) {
-                int byteCount;
-                char[] bytes = new char[512];
-                while ((byteCount = in.read(bytes, 0, 512)) != -1) {
-                    writer1.write(bytes, 0, byteCount);
-                }
-                writer1.flush();
+    public void downloadFile(String fileName, Socket dataSocket) throws IOException {
+          Objects.requireNonNull(dataSocket, "not connected");
+        OutputStream fileOut = Files.newOutputStream(Paths.get("./files/" + fileName), StandardOpenOption.APPEND);
+        try (BufferedInputStream input = new BufferedInputStream(dataSocket.getInputStream()); BufferedOutputStream output = new BufferedOutputStream(fileOut)) {
+            byte[] buffer = new byte[2048];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            output.flush();
         }
     }
-    public synchronized void getFile(String fileName) throws IOException, InterruptedException {
-        this.enterActiveMode();
 
-        sendCommand(Command.RETR, fileName);
+    public synchronized void getFile(String fileName) throws IOException, InterruptedException {
+        Socket socket1 = setTransfer(fileName, Command.RETR);
 
         String response = readResponse();
 
@@ -200,9 +195,9 @@ public class Server {
             String messErr = response.startsWith("550") ? notFound : invalid;
             throw new RuntimeException(messErr);
         }
-
-        downloadFile(fileName);
-        response = readResponse();
+        downloadFile(fileName, socket1);
+        readResponse();
+    }
 
     private synchronized Socket setTransfer(String fileName, Command command) throws IOException, InterruptedException {
         Socket thisSocket;
