@@ -111,10 +111,10 @@ public class Server {
     }
 
 
-
-
-    public synchronized void enterActiveMode() throws IOException {
-        if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
+    public synchronized ServerSocket enterActiveMode() throws IOException {
+        if (Objects.isNull(socket) | Objects.isNull(writerRequest)) {
+            throw new NullPointerException("server not connected");
+        }
         try {
             ServerSocket activeSocket = new ServerSocket(0);
             byte[] address = socket.getLocalAddress().getAddress();
@@ -129,22 +129,23 @@ public class Server {
             portCmd.append((port / 256)).append(delimiter).append(port % 256);
 
             sendCommand(Command.PORT, portCmd.toString());
-
-            String response = readResponse(); // if 500 - not support active mode
+            if (active == null) readResponse(); // if 500 - not support active mode
 
             active = activeSocket;
             active.setSoTimeout(DEFAULT_TIMEOUT);
+            return active;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
+        return null;
     }
 
-    public synchronized void enterPassiveMode() throws IOException, InterruptedException {
+    public synchronized Socket enterPassiveMode() throws IOException, InterruptedException {
 
         sendCommand(Command.PASV, "");
 
         String response = readResponse();
-        if (!response.startsWith("227")) throw new IOException("not request passive mode: " + response);
+        if (!response.startsWith("227 ")) throw new IOException("not request passive mode: " + response);
 
         Pattern compile = Pattern.compile("\\([\\d,]+\\)");
         Matcher matcher = compile.matcher(response);
@@ -154,7 +155,9 @@ public class Server {
 
             String ip = String.join(".", Arrays.copyOfRange(split, 0, 4));
             int port = (Integer.parseInt(split[4]) * 256) + Integer.parseInt(split[5]);
-            this.setSocket(new Socket(ip, port));
+            //  this.setSocket();
+            isPassiveMode = true;
+            return new Socket(ip, port);
         } else {
             throw new RuntimeException("not found ip");
         }
@@ -197,7 +200,30 @@ public class Server {
         downloadFile(fileName);
         response = readResponse();
 
+    private synchronized Socket setTransfer(String fileName, Command command) throws IOException, InterruptedException {
+        Socket thisSocket;
+        if (!isPassiveMode) {
+            ServerSocket serverSocket = enterActiveMode();
+            sendCommand(command, fileName);
+            thisSocket = Objects.requireNonNull(serverSocket).accept();
+        } else {
+            thisSocket = this.enterPassiveMode();
+            sendCommand(command, fileName);
+        }
+        return thisSocket;
+    }
 
+    private synchronized Socket setTransfer(Command command) throws IOException, InterruptedException {
+        Socket thisSocket;
+        if (!isPassiveMode) {
+            ServerSocket serverSocket = enterActiveMode();
+            sendCommand(command, "");
+            thisSocket = Objects.requireNonNull(serverSocket).accept();
+        } else {
+            thisSocket = this.enterPassiveMode();
+            sendCommand(command, "");
+        }
+        return thisSocket;
     }
 
 
