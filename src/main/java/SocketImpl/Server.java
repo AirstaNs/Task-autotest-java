@@ -16,16 +16,11 @@ import java.util.regex.Pattern;
 public class Server {
     public static final int DEFAULT_PORT = 21;
     private static final int DEFAULT_TIMEOUT = 7000;
-
     private Socket socket = null;
-
     private ServerSocket active = null;
-
     private BufferedReader readerResponse = null;
     private BufferedWriter writerRequest = null;
-
     private static boolean DEBUG = true; //TODO REMOVE
-
     private boolean isPassiveMode = false;
 
 
@@ -159,15 +154,11 @@ public class Server {
 
             String ip = String.join(".", Arrays.copyOfRange(split, 0, 4));
             int port = (Integer.parseInt(split[4]) * 256) + Integer.parseInt(split[5]);
-            //  this.setSocket();
             isPassiveMode = true;
             return new Socket(ip, port);
         } else {
             throw new RuntimeException("not found ip");
         }
-        if (true) throw new RuntimeException("fix");
-
-        //TODO     Socket dataSocket = new Socket(ip, port);
 
     }
 
@@ -227,26 +218,24 @@ public class Server {
 
 
     public synchronized void appendFile1(String fileName) throws IOException, InterruptedException {
-        enterActiveMode();
-
-        sendCommand(Command.APPE, "Aboba.txt"); //STOR - ГРУЗИТЬ БЕЗ . APPE - ДОБАВЛЯТЬ
-        readResponse();
-        uploadFile(("./files/" + fileName), active.accept());
+        Socket socket1 = setTransfer(fileName, Command.APPE);
+        uploadFile((fileName), socket1);
+        Thread.sleep(600);
         readResponse();
 
     }
 
     public void uploadFile(String localFilename, Socket dataSocket) throws IOException {
         Objects.requireNonNull(dataSocket, "not connected");
-
-        try (BufferedOutputStream out = new BufferedOutputStream(dataSocket.getOutputStream()); FileInputStream in = new FileInputStream(localFilename)) {
-
-            byte[] buffer = new byte[1024];
-            int count;
-            while ((count = in.read(buffer)) > 0) {
-                out.write(buffer, 0, count);
+        try (BufferedOutputStream output = new BufferedOutputStream(dataSocket.getOutputStream());
+             BufferedInputStream input = new BufferedInputStream(Files.newInputStream(Paths.get(
+                "./files/" + localFilename)))) {
+            byte[] buffer = new byte[2048];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
             }
-            out.flush();
+            output.flush();
         }
     }
 
