@@ -251,18 +251,21 @@ public class Server {
     }
 
     public boolean findFile(String remoteName) throws IOException, InterruptedException {
-        enterActiveMode();
-        sendCommand(Command.LIST, "");
-
-        Socket activeSocket = active.accept();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(activeSocket.getInputStream()))) {
-            boolean isFind = true;
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.contains(remoteName)) return isFind;
+        boolean isFind = false;
+        try (Socket socket1 = setTransfer(Command.LIST)) {
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(socket1.getInputStream()))) {
+                String line;
+                while ((line = input.readLine()) != null) {
+                    if (line.contains(remoteName)) {
+                        isFind = true;
+                        break;
+                    }
+                }
+                readResponse();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        readResponse();
-        return false;
+        return isFind;
     }
 }
