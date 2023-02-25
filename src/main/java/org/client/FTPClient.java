@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Server {
+public class FTPClient  {
     public static final int DEFAULT_PORT = 21;
     private static final int DEFAULT_TIMEOUT = 7000;
     private Socket socket = null;
@@ -24,7 +24,7 @@ public class Server {
     private boolean isPassiveMode = false;
 
 
-    public Server(String host) throws IOException {
+    public FTPClient(String host) throws IOException {
         if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
 
         this.setSocket(new Socket(host, DEFAULT_PORT));

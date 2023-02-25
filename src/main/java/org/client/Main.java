@@ -7,32 +7,36 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException, IOException {
-        Server server = null;
+    public static void main(String[] args) {
+        FTPClient FTPClient = null;
         try {
             String name = "students.json";
-            server = getServer();
-            server.getFile(name);
-            server.appendFile1(name);
-            System.out.println(server.findFile(name));
+            FTPClient = getServer();
+            FTPClient.getFile(name);
+            FTPClient.appendFile1(name);
+            System.out.println(FTPClient.findFile(name));
         }catch (Exception e){
             e.printStackTrace();
         }finally
         {
-            if (server != null) {
-                server.disconnect();
+            if (FTPClient != null) {
+                try {
+                    FTPClient.disconnect();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public static Server getServer() {
+    public static FTPClient getServer() {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("./hosts/beget.txt"))) {
             String host = bufferedReader.readLine();
             String log = bufferedReader.readLine();
             String pass = bufferedReader.readLine();
-            Server server = new Server(host);
-            server.login(log, pass);
-            return server;
+            FTPClient FTPClient = new FTPClient(host);
+            FTPClient.login(log, pass);
+            return FTPClient;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
