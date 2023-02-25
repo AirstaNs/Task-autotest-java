@@ -61,7 +61,7 @@ public class Utils {
         return openBracket + newLine + obj + newLine + closeBracket;
     }
 
-    public static void addIndent(String str) {
+    public static String addIndent(String str) {
         StringBuilder builder = new StringBuilder(str);
         List<Character> chars = CharBuffer.wrap(str).chars().mapToObj(ch -> (char) ch).collect(Collectors.toList());
         int countOpenBracket = 0;
@@ -91,6 +91,6 @@ public class Utils {
             }
         }
         builder.trimToSize();
-        System.out.println(builder.toString());
+      return  builder.toString();
     }
 }
