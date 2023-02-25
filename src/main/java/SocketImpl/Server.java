@@ -2,8 +2,7 @@ package SocketImpl;
 
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -97,6 +96,7 @@ public class Server {
     public synchronized void disconnect() throws IOException, InterruptedException {
         try {
             sendCommand(Command.QUIT, "");
+            Thread.sleep(500);
         } finally {
             Objects.requireNonNull(reader, "server not connected");
             while (reader.ready()) {
@@ -224,5 +224,20 @@ public class Server {
             out.flush();
         }
     }
-}
 
+    public boolean findFile(String remoteName) throws IOException, InterruptedException {
+        enterActiveMode();
+        sendCommand(Command.LIST, "");
+
+        Socket activeSocket = active.accept();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(activeSocket.getInputStream()))) {
+            boolean isFind = true;
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.contains(remoteName)) return isFind;
+            }
+        }
+        readResponse();
+        return false;
+    }
+}
