@@ -24,15 +24,12 @@ public class Server {
     private boolean isPassiveMode = false;
 
 
-    public Server(String host) {
+    public Server(String host) throws IOException {
         if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
-        try {
-            this.setSocket(new Socket(host, DEFAULT_PORT));
-            String response = readResponse();
-            if (!response.startsWith("220 ")) throw new RuntimeException("FTP server connection failed: " + response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        this.setSocket(new Socket(host, DEFAULT_PORT));
+        String response = readResponse();
+        if (!response.startsWith("220")) throw new RuntimeException("FTP server connection failed: " + response);
     }
 
     private synchronized void setSocket(Socket socket) throws IOException {
@@ -42,11 +39,10 @@ public class Server {
         socket.setSoTimeout(DEFAULT_TIMEOUT);
     }
 
-    public synchronized void login(String login, String pass) {
+    public synchronized void login(String login, String pass) throws IOException {
         Objects.requireNonNull(login, "login cannot be empty");
         Objects.requireNonNull(pass, "pass cannot be empty");
 
-        try {
             sendCommand(Command.USER, login);
             String response = readResponse();
             if (!response.startsWith("331")) throw new RuntimeException("FTP server invalid login: " + response);
@@ -54,9 +50,6 @@ public class Server {
             sendCommand(Command.PASS, pass);
             response = readResponse();
             if (!response.startsWith("230")) throw new RuntimeException("FTP server invalid password: " + response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /* method to send commands to ftp server */
@@ -75,7 +68,7 @@ public class Server {
         writerRequest.flush();
 
         if (DEBUG) {
-            if (command.equals(Command.USER) || command.equals(Command.PASS)) {
+            if (command ==Command.USER || command ==Command.PASS) {
                 final String invisible = "*****";
                 commandLine = command.name() + sep + invisible + endCommand;
             }
@@ -83,7 +76,7 @@ public class Server {
         }
     }
 
-    private synchronized String readResponse() throws IOException, InterruptedException {
+    private synchronized String readResponse() throws IOException {
         Objects.requireNonNull(readerResponse, "server not connected");
         String response = readerResponse.readLine();
         while (readerResponse.ready()) {
@@ -110,11 +103,10 @@ public class Server {
     }
 
 
-    public synchronized ServerSocket enterActiveMode() throws IOException {
+    public synchronized ServerSocket enterActiveMode() throws Exception {
         if (Objects.isNull(socket) | Objects.isNull(writerRequest)) {
             throw new NullPointerException("server not connected");
         }
-        try {
             ServerSocket activeSocket = new ServerSocket(0);
             byte[] address = socket.getLocalAddress().getAddress();
             int port = activeSocket.getLocalPort();
@@ -128,15 +120,13 @@ public class Server {
             portCmd.append((port / 256)).append(delimiter).append(port % 256);
 
             sendCommand(Command.PORT, portCmd.toString());
-            if (active == null) readResponse(); // if 500 - not support active mode
+           // if (active == null)
+            String response = readResponse();// if 500 - not support active mode
+            if(!response.startsWith("200")) throw new Exception("not request active mode: " + response);
 
             active = activeSocket;
             active.setSoTimeout(DEFAULT_TIMEOUT);
             return active;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public synchronized Socket enterPassiveMode() throws IOException, InterruptedException {
@@ -175,12 +165,12 @@ public class Server {
         }
     }
 
-    public synchronized void getFile(String fileName) throws IOException, InterruptedException {
+    public synchronized void getFile(String fileName) throws Exception {
         Socket socket1 = setTransfer(fileName, Command.RETR);
 
         String response = readResponse();
-
-        if (!response.startsWith("150")) {
+        boolean accept = !response.startsWith("150") && !response.startsWith("125") && !response.startsWith("226");
+        if (accept){
             String notFound = "could not be found on the FTP server.";
             String invalid = "Invalid response from FTP server for file transfer: " + response;
             String messErr = response.startsWith("550") ? notFound : invalid;
@@ -190,7 +180,7 @@ public class Server {
         readResponse();
     }
 
-    private synchronized Socket setTransfer(String fileName, Command command) throws IOException, InterruptedException {
+    private synchronized Socket setTransfer(String fileName, Command command) throws Exception {
         Socket thisSocket;
         if (!isPassiveMode) {
             ServerSocket serverSocket = enterActiveMode();
@@ -203,7 +193,7 @@ public class Server {
         return thisSocket;
     }
 
-    private synchronized Socket setTransfer(Command command) throws IOException, InterruptedException {
+    private synchronized Socket setTransfer(Command command) throws Exception {
         Socket thisSocket;
         if (!isPassiveMode) {
             ServerSocket serverSocket = enterActiveMode();
@@ -217,7 +207,7 @@ public class Server {
     }
 
 
-    public synchronized void appendFile1(String fileName) throws IOException, InterruptedException {
+    public synchronized void appendFile1(String fileName) throws Exception {
         Socket socket1 = setTransfer(fileName, Command.APPE);
         uploadFile((fileName), socket1);
         Thread.sleep(600);
@@ -239,7 +229,7 @@ public class Server {
         }
     }
 
-    public boolean findFile(String remoteName) throws IOException, InterruptedException {
+    public boolean findFile(String remoteName) throws Exception {
         boolean isFind = false;
         try (Socket socket1 = setTransfer(Command.LIST)) {
             try (BufferedReader input = new BufferedReader(new InputStreamReader(socket1.getInputStream()))) {
@@ -251,8 +241,6 @@ public class Server {
                     }
                 }
                 readResponse();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         return isFind;
