@@ -1,4 +1,4 @@
-package SocketImpl;
+package org.client;
 
 public enum Command {
     USER, // задает логин
