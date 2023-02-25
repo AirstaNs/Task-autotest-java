@@ -1,12 +1,15 @@
 package org.parser;
 
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utils {
     public static final String JsonDelimiterValue = ": ";
     public static final char openBracket = '{', closeBracket = '}';
     public static final String newLine = "\n";
-    public static final String comma = ",";
+    public static final char comma = ',';
     public static final char objDelimiterValue = '=';
 
     public static final String backets = "[{}]";
@@ -58,5 +61,36 @@ public class Utils {
         return openBracket + newLine + obj + newLine + closeBracket;
     }
 
-
+    public static void addIndent(String str) {
+        StringBuilder builder = new StringBuilder(str);
+        List<Character> chars = CharBuffer.wrap(str).chars().mapToObj(ch -> (char) ch).collect(Collectors.toList());
+        int countOpenBracket = 0;
+        int add = 0;
+        char[] ident = {};
+        for (int i = 0; i < chars.size(); i++) {
+            Character character = chars.get(i);
+            // Вставлять после открывающих скобок отступы
+            if (character == openBracket || character == openSquareBracket) {
+                ++countOpenBracket;
+                ident = Utils.repeatIdent(countOpenBracket, 1);
+                int skip = add + i + 2;
+                builder.insert(skip, ident);
+                add += ident.length;
+                // Всавлять после запятых пробелы
+            } else if (character == comma) {
+                int skip = add + i + 2;
+                builder.insert(skip, ident);
+                add += ident.length;
+                // Вставлять после закрывающих скобок отступы и уменьшать счетчик отступов
+            } else if (character == closeBracket || character == closeSquareBracket) {
+                --countOpenBracket;
+                ident = Utils.repeatIdent(countOpenBracket, 1);
+                int skip = add + i;
+                builder.insert(skip, ident);
+                add += ident.length;
+            }
+        }
+        builder.trimToSize();
+        System.out.println(builder.toString());
+    }
 }
