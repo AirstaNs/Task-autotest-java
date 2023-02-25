@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.MatchResult;
@@ -20,11 +21,13 @@ public class Server {
 
     private ServerSocket active = null;
 
-    private BufferedReader reader = null;
-
-    private BufferedWriter writer = null;
+    private BufferedReader readerResponse = null;
+    private BufferedWriter writerRequest = null;
 
     private static boolean DEBUG = true; //TODO REMOVE
+
+    private boolean isPassiveMode = false;
+
 
     public Server(String host) {
         if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
@@ -39,8 +42,8 @@ public class Server {
 
     private synchronized void setSocket(Socket socket) throws IOException {
         this.socket = socket;
-        this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.readerResponse = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.writerRequest = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         socket.setSoTimeout(DEFAULT_TIMEOUT);
     }
 
@@ -63,7 +66,9 @@ public class Server {
 
     /* method to send commands to ftp server */
     private synchronized void sendCommand(Command command, String args) throws IOException {
-        if (Objects.isNull(socket) | Objects.isNull(writer)) throw new NullPointerException("server not connected");
+        if (Objects.isNull(socket) | Objects.isNull(writerRequest)) {
+            throw new NullPointerException("server not connected");
+        }
         Objects.requireNonNull(command, "empty command");
         Objects.requireNonNull(args, "args null");
 
@@ -71,8 +76,8 @@ public class Server {
         final String sep = " ";
         String commandLine = command.name() + sep + args + endCommand;
 
-        writer.write(commandLine); // "command args \r\n"
-        writer.flush();
+        writerRequest.write(commandLine); // "command args \r\n"
+        writerRequest.flush();
 
         if (DEBUG) {
             if (command.equals(Command.USER) || command.equals(Command.PASS)) {
@@ -84,10 +89,10 @@ public class Server {
     }
 
     private synchronized String readResponse() throws IOException, InterruptedException {
-        Objects.requireNonNull(reader, "server not connected");
-        String response = reader.readLine();
-        while (reader.ready()) {
-            response = reader.readLine();
+        Objects.requireNonNull(readerResponse, "server not connected");
+        String response = readerResponse.readLine();
+        while (readerResponse.ready()) {
+            response = readerResponse.readLine();
         }
         if (DEBUG) System.out.printf("response -> %15s%n", response);
         return response;
@@ -98,10 +103,9 @@ public class Server {
             sendCommand(Command.QUIT, "");
             Thread.sleep(500);
         } finally {
-            Objects.requireNonNull(reader, "server not connected");
-            while (reader.ready()) {
-                System.out.println(reader.readLine());
-                Thread.sleep(500);
+            Objects.requireNonNull(readerResponse, "server not connected");
+            while (readerResponse.ready()) {
+                System.out.println(readerResponse.readLine());
             }
             if (socket != null) socket.close();
             if (active != null) active.close();
