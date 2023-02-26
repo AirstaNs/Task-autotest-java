@@ -10,7 +10,7 @@ mvn
 ```
 Собранный jar-файл будет находиться в папке /target
 ## Инструкция по работе с приложением
-Запустить jar-файл через консоль в том же пакете:
+Запустить jar-файл через консоль в том же пакете, где он находится файл:  
 ```bash 
 java -jar Task-autotest-java-1.0.jar
 ```
@@ -45,5 +45,46 @@ java -jar Task-autotest-java-1.0.jar
 ✔️ **Реализована кроссплатформенность**
 
 ## Описание модулей и классов
-### Пакет org.client
+### Модуль [org.client](https://github.com/AirstaNs/Task-autotest-java/tree/main/src/main/java/org/client)
+Предназначен для работы с FTP сервером.  
+В классе **FTPClient** реализованы методы для работы с FTP сервером, такие как:  
+1. getFile() - получение файла с сервера
+2. replaceFile() - загрузка файла на сервер
+3. findFile() - поиск файла на сервере
+4. downloadFile() - скачивание файла с сервера  
 
+В классе **Command** установлены константы для команд FTP сервера.  
+
+В классе **FTPConnection** реализованы методы для подключения к FTP серверу, такие как:
+1. enterPassiveMode() - вход в пассивный режим
+2. enterActiveMode() - вход в активный режим
+3. setTransfer() - переключение между режимами
+4. disconnect() - отключение от сервера
+5. readResponse() - чтение ответа сервера
+6. sendCommand() - отправка команды серверу  
+
+### Модуль [org.menu](https://github.com/AirstaNs/Task-autotest-java/tree/main/src/main/java/org/menu)  
+Реализует консольное поведение приложения, 2-х страниц - входа и меню приложения.  
+Реализован с применением паттерна **Command**.  
+В классе **ClientMenu** реализованы методы для работы с ftp сервером.  
+В классе **Login** реализованы методы для входа в приложение.  
+
+### Модуль [org.model](https://github.com/AirstaNs/Task-autotest-java/tree/main/src/main/java/org/model)
+ Реализует хранение данных о студентах.
+В классе **Student** реализованы методы для работы с данными о студентах, такие как:
+1. getId() - получение id студента
+2. getName() - получение имени студента
+3. compareTo() - сравнение студентов по имени
+
+### Модуль [org.parser](https://github.com/AirstaNs/Task-autotest-java/tree/main/src/main/java/org/parser)  
+Реализует парсинг из JSON в объекты Student и обратно.
+В классе **JSON** реализованы методы для парсинга из JSON в объекты Student и обратно, с помощью методов:
+1. fromJSON() - парсинг из JSON в объекты Student
+2. toJSON() - парсинг из объектов Student в JSON
+3. toArrayJSON() - парсинг из массива объектов Student в JSON  
+
+В классе **Utils** реализованы методы и константы для работы с парсингом JSON, такие, как:  
+1. repeatIdent() - повторение отступа.
+2. wrapInQuotes() - обертка в кавычки.
+3. wrapInBrackets() - обертка в фигурные скобки.
+4. addIndent() - добавление отступов для красивого вывода в файл.
