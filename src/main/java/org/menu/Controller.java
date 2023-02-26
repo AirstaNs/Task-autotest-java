@@ -60,6 +60,7 @@ public class Controller {
         if (page == null) {
             throw new NullPointerException("No Actions");
         } else {
+            System.out.println("--------------------");
             System.out.println("Please select an action:\n");
             page.stream().map(Action::toString).forEach(System.out::println);
         }
