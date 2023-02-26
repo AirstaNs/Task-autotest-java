@@ -73,7 +73,7 @@ public class FTPConnection {
         } finally {
             Objects.requireNonNull(readerResponse, "server not connected");
             while (readerResponse.ready()) {
-                System.out.println(readerResponse.readLine());
+                readerResponse.readLine();
             }
             if (socket != null) socket.close();
             socket = null;
