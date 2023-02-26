@@ -17,19 +17,20 @@ public class GetStudentById extends Action {
         this.clientMenu = clientMenu;
 
     }
+
     @Override
     public void execute(Controller controller) {
         try {
             int id = getIdFromConsole();
-            clientMenu.getStudentById(controller,id);
+            clientMenu.getStudentById(controller, id);
 
         } catch (Exception e) {
             System.out.println("Invalid input id");
         }
     }
 
-    private int getIdFromConsole(){
+    private int getIdFromConsole() {
         System.out.println("Enter the student id:");
-        return  new Scanner(System.in).nextInt();
+        return new Scanner(System.in).nextInt();
     }
 }

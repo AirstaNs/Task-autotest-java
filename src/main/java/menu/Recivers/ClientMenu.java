@@ -3,8 +3,12 @@ package menu.Recivers;
 
 import menu.Controller;
 import org.model.Student;
+import org.parser.JSON;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -23,12 +27,14 @@ public class ClientMenu implements ShouldBeExit {
      * If the data is incorrect - DOES NOT redirect to the page of the Personal Account. <br>
      * if correct, redirects to the page of the Personal Account
      */
-    public void getStudentById(Controller controller, int id) {
+    public Optional<Student> getStudentById(Controller controller, int id) {
+        Optional<Student> optStudent = Optional.empty();
         try {
-            controller.getFtpClient().getFile(controller.getFileName());
+            optStudent = getListStudents(controller).stream().filter(student -> student.getId() == id).findFirst();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return optStudent;
     }
 
     public void addStudent(String name, Controller controller) {
@@ -36,10 +42,26 @@ public class ClientMenu implements ShouldBeExit {
     }
 
     public List<Student> getStudents(Controller controller, String name) {
-       // controller.getFtpClient().getFile(controller.getFileName());
-        return null;
+        List<Student> students = Collections.emptyList();
+        try {
+            students = getListStudents(controller)
+                    .stream()
+                    .filter(student -> student.getName().equals(name))
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return students;
     }
-    public void removeStudent(Controller controller, int id){
-      //  controller.getFtpClient()
+
+    public void removeStudent(Controller controller, int id) {
+        //  controller.getFtpClient()
+    }
+
+    private List<Student> getListStudents(Controller controller) throws Exception {
+        String file = controller.getFtpClient().getFile(controller.getFileName());
+        JSON json = new JSON();
+        return json.fromJson(file);
     }
 }

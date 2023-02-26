@@ -21,19 +21,16 @@ public class GetStudents extends Action {
 
     }
 
-
     @Override
     public void execute(Controller controller) {
-            String nameFromConsole = getNameFromConsole();
+        String nameFromConsole = getNameFromConsole();
+        List<Student> studentList = clientMenu.getStudents(controller, nameFromConsole);
 
-        List<Student> customerList = clientMenu.getStudents(controller,nameFromConsole);
-
-        if (customerList.isEmpty()) {
-            System.out.println("The student list is empty!");
+        if (studentList.isEmpty()) {
+            System.out.println("Student not found");
         } else {
-            this.printComaniesToConsole(customerList);
+            this.printStudentsToConsole(studentList);
         }
-
     }
 
     private String getNameFromConsole() {
@@ -41,13 +38,16 @@ public class GetStudents extends Action {
         return new Scanner(System.in).nextLine();
     }
 
-    private boolean isBackAction(int actionOrCompany) {
-        return actionOrCompany == 0;
-    }
-
-    private void printComaniesToConsole(List<Student> students) {
-        System.out.println("Customer list:");
-        students.forEach((student) -> System.out.printf("%d. %s%n", student.getId(), student.getName()));
+    /**
+     *  List students in alphabetical order.
+     * @param students - List of students received from the server.
+     */
+    private void printStudentsToConsole(List<Student> students) {
+        System.out.println("Students list:");
+        students.stream()
+                .sorted()
+                .forEach(System.out::println);
+       // students.forEach((student) -> System.out.printf("%d. %s%n", student.getId(), student.getName()));
             /* TODO
            for (int i = 0; i < students.size(); i++) {
                 Car car = students.get(i);
