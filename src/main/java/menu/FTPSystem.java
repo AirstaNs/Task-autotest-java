@@ -3,6 +3,7 @@ package menu;
 
 
 import menu.Recivers.ClientMenu;
+import menu.Recivers.LoginMenu;
 import org.client.FTPClient;
 import org.client.FTPConnection;
 
@@ -30,24 +31,30 @@ public class FTPSystem {
 
 
     public void start() {
-        initSystem();
+        try {
+            initSystem();
+            controller.setPage(Page.clientPage(new ClientMenu()));
 
-        //ontroller.setPage(Page.clientPage(Welcome_Menu));
-        controller.setPage(Page.clientPage(new ClientMenu()));
+            while (isWork) {
+                menu(controller);
+            }
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }finally {
+            try {
+                controller.getFtpClient().disconnect();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
 
-        while (isWork) {
-            menu(controller);
+            }
         }
     }
 
 
     private void initSystem() {
-
-        try {
-            FTPSystem.controller = new Controller(new FTPClient(new FTPConnection(null)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        LoginMenu loginMenu = new LoginMenu();
+        FTPClient ftpClient = loginMenu.LogIn();
+        FTPSystem.controller = new Controller(ftpClient);
         //if (true) throw new RuntimeException();
         //        Scanner scanner = new Scanner(System.in);
         //        scanner.nex
@@ -59,9 +66,10 @@ public class FTPSystem {
     private void menu(Controller controller) {
         controller.printPage();
         try {
-            controller.executeCommand(scanner.nextInt());
+            int command = Integer.parseInt(scanner.next());
+            controller.executeCommand(command);
         } catch (RuntimeException e) {
-            System.out.println("Wrong action\n");
+            System.err.println("Wrong action\n");
         }
     }
 

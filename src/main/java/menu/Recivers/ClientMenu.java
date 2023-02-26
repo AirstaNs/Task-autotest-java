@@ -19,7 +19,7 @@ public class ClientMenu implements ShouldBeExit {
         try {
             optStudent = getListStudents(controller).stream().filter(student -> student.getId() == id).findFirst();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return optStudent;
     }
@@ -29,10 +29,12 @@ public class ClientMenu implements ShouldBeExit {
             List<Student> listStudents = getListStudents(controller);
             int other = 1;
             int maxID = listStudents.stream().mapToInt(Student::getId).max().orElse(other);
+            ++maxID;
             listStudents.add(new Student(maxID,name));
             uploadFile(controller,listStudents);
+            System.out.println("Student added");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -45,7 +47,7 @@ public class ClientMenu implements ShouldBeExit {
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return students;
     }
@@ -53,7 +55,10 @@ public class ClientMenu implements ShouldBeExit {
     public void removeStudent(Controller controller, int id) throws Exception {
         List<Student> listStudents = getListStudents(controller);
         boolean b = listStudents.removeIf(student -> student.getId() == id);
-        if (b) uploadFile(controller, listStudents);
+        if (b) {
+            uploadFile(controller, listStudents);
+            System.out.println("Student removed");
+        }else System.out.println("Student not found");
     }
 
     private static void uploadFile(Controller controller, List<Student> listStudents) throws Exception {

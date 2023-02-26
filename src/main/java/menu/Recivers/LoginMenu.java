@@ -24,7 +24,7 @@ public class LoginMenu implements ShouldBeExit {
             ftpClient = new FTPClient(host.get());
             success = login(ftpClient, scanner);
         }
-        System.out.println("Login successful");
+        System.out.println("Login successful!");
         return ftpClient;
     }
 
@@ -35,9 +35,9 @@ public class LoginMenu implements ShouldBeExit {
             String host = scanner.next();
             return Optional.of(new FTPConnection(host));
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         } catch (IOException e) {
-            System.out.println("Connection error");
+            System.err.println("Connection error");
         }
         System.out.println("Please try again");
         return empty;
@@ -53,9 +53,9 @@ public class LoginMenu implements ShouldBeExit {
             ftpClient.login(login, password);
             successful = true;
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         } catch (IOException e) {
-            System.out.println("Connection error");
+            System.err.println("Connection error");
         }
         return successful;
     }

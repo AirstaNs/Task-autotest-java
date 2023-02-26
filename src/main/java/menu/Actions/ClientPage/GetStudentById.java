@@ -4,7 +4,9 @@ package menu.Actions.ClientPage;
 import menu.Actions.Action;
 import menu.Controller;
 import menu.Recivers.ClientMenu;
+import org.model.Student;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class GetStudentById extends Action {
@@ -22,10 +24,12 @@ public class GetStudentById extends Action {
     public void execute(Controller controller) {
         try {
             int id = getIdFromConsole();
-            clientMenu.getStudentById(controller, id);
-
+            Optional<Student> studentById = clientMenu.getStudentById(controller, id);
+            if(studentById.isPresent())
+                System.out.println(studentById.get());
+            else System.err.println("Student not found");
         } catch (Exception e) {
-            System.out.println("Invalid input id");
+            System.err.println("Invalid input id");
         }
     }
 

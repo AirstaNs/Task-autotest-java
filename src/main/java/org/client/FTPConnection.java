@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FTPConnection {
-    private static boolean DEBUG = true; //TODO REMOVE
+    private static boolean DEBUG = false;
     public static final int DEFAULT_PORT = 21;
     private static final int DEFAULT_TIMEOUT = 7000;
     private Socket socket = null;
@@ -24,7 +24,7 @@ public class FTPConnection {
 
         this.setSocket(new Socket(host, DEFAULT_PORT));
         String response = readResponse();
-        if (Objects.isNull(response)|| !response.startsWith("220")) throw new RuntimeException("FTP server connection failed:");
+        if (Objects.isNull(response)|| !response.startsWith("220")) throw new RuntimeException("FTP server connection failed");
     }
     private synchronized void setSocket(Socket socket) throws IOException {
         this.socket = socket;
