@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 
 public class AddStudent extends Action {
-    private static final String title = "add Student";
+    private static final String title = "Add student";
     private final ClientMenu clientMenu;
 
     public AddStudent(int numberItem, ClientMenu clientMenu) {

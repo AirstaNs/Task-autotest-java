@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GetStudents extends Action {
-    private static final String title = "Getting students by name";
+    private static final String title = "Get students by name";
 
     private final ClientMenu clientMenu;
 

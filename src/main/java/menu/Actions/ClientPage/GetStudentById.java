@@ -8,7 +8,7 @@ import menu.Recivers.ClientMenu;
 import java.util.Scanner;
 
 public class GetStudentById extends Action {
-    private static final String title = "Getting a student by id";
+    private static final String title = "Get student by id";
     private final ClientMenu clientMenu;
 
 

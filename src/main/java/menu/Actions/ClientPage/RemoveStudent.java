@@ -7,7 +7,7 @@ import menu.Recivers.ClientMenu;
 import java.util.Scanner;
 
 public class RemoveStudent extends Action {
-    private static final String title = "remove Student";
+    private static final String title = "Remove student";
     private final ClientMenu clientMenu;
 
     public RemoveStudent(int numberItem, ClientMenu clientMenu) {
