@@ -17,7 +17,7 @@ public class FTPConnection {
     private BufferedReader readerResponse = null;
     private BufferedWriter writerRequest = null;
 
-    private boolean  isPassiveMode = false;
+    private boolean  isPassiveMode = true;
 
     public FTPConnection(String host) throws IOException {
         if (Objects.isNull(host) || host.isEmpty()) throw new RuntimeException("host is empty");
@@ -82,13 +82,20 @@ public class FTPConnection {
 
     protected synchronized Socket setTransfer(String fileName, Command command) throws Exception {
         Socket thisSocket;
-        if (!isPassiveMode) {
+        try {
+            if (!isPassiveMode) {
+                ServerSocket serverSocket = enterActiveMode();
+                sendCommand(command, fileName);
+                thisSocket = Objects.requireNonNull(serverSocket).accept();
+            } else {
+                thisSocket = this.enterPassiveMode();
+                sendCommand(command, fileName);
+            }
+        }catch (Exception e){
             ServerSocket serverSocket = enterActiveMode();
             sendCommand(command, fileName);
             thisSocket = Objects.requireNonNull(serverSocket).accept();
-        } else {
-            thisSocket = this.enterPassiveMode();
-            sendCommand(command, fileName);
+            isPassiveMode = false;
         }
         return thisSocket;
     }

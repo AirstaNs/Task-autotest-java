@@ -24,10 +24,6 @@ public class FTPSystem {
      * Displays all items on the page.
      */
     private static Controller controller;
-    /**
-     * The initialization page is available without logging in. A specific menu item and page
-     */
-    public static ClientMenu Welcome_Menu;
 
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -36,7 +32,7 @@ public class FTPSystem {
     public void start() {
         initSystem();
 
-       // controller.setPage(Page.welcomePage(Welcome_Menu));
+        //ontroller.setPage(Page.clientPage(Welcome_Menu));
         controller.setPage(Page.clientPage(new ClientMenu()));
 
         while (isWork) {
@@ -46,6 +42,7 @@ public class FTPSystem {
 
 
     private void initSystem() {
+
         try {
             FTPSystem.controller = new Controller(new FTPClient(new FTPConnection(null)));
         } catch (IOException e) {

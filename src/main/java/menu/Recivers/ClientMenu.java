@@ -19,7 +19,7 @@ public class ClientMenu implements ShouldBeExit {
         try {
             optStudent = getListStudents(controller).stream().filter(student -> student.getId() == id).findFirst();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return optStudent;
     }
@@ -32,7 +32,7 @@ public class ClientMenu implements ShouldBeExit {
             listStudents.add(new Student(maxID,name));
             uploadFile(controller,listStudents);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class ClientMenu implements ShouldBeExit {
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return students;
     }

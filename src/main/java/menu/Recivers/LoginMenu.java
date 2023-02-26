@@ -12,25 +12,20 @@ import java.util.Scanner;
 
 public class LoginMenu implements ShouldBeExit {
 
-    private Controller controller;
-
-    public LoginMenu(Controller controller) {
-        this.controller = controller;
-    }
-
-
-    public void LogIn(ClientMenu clientMenu) {
+    public FTPClient LogIn() {
+        FTPClient ftpClient = null;
         Scanner scanner = new Scanner(System.in);
         boolean success = false;
         System.out.println("Welcome to the console FTPClient");
         while (!success) {
             Optional<FTPConnection> host = initHost(scanner);
             if(!host.isPresent()) continue;
-            FTPClient ftpClient = new FTPClient(host.get());
 
+            ftpClient = new FTPClient(host.get());
             success = login(ftpClient, scanner);
         }
         System.out.println("Login successful");
+        return ftpClient;
     }
 
     private Optional<FTPConnection> initHost(Scanner scanner) {
@@ -66,7 +61,8 @@ public class LoginMenu implements ShouldBeExit {
     }
 
 
-    public static void main(String[] args) {
-        new LoginMenu(null).LogIn(null);
+    public static void main(String[] args) throws Exception {
+        FTPClient ftpClient = new LoginMenu().LogIn();
+        System.out.println(ftpClient.getFile("students.json"));
     }
 }
