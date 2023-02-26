@@ -23,6 +23,7 @@ public class Page {
         return new ArrayList<Action>() {{
             add(new GetStudents(this.size(), clientMenu));
             add(new GetStudentById(this.size(), clientMenu));
+            add(new GetAllStudents(this.size(), clientMenu));
             add(new AddStudent(this.size(), clientMenu));
             add(new RemoveStudent(this.size(), clientMenu));
             add(new Exit_Action(this.size(), clientMenu));

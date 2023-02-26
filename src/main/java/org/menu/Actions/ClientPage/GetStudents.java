@@ -47,7 +47,7 @@ public class GetStudents extends Action {
         students.stream()
                 .sorted()
                 .forEach(student -> System.out.println("--"+student));
-        System.out.println("End of list\n");
+        System.out.println("End of list");
        // students.forEach((student) -> System.out.printf("%d. %s%n", student.getId(), student.getName()));
             /* TODO
            for (int i = 0; i < students.size(); i++) {

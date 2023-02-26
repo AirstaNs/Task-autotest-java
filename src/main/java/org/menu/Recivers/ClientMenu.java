@@ -67,7 +67,7 @@ public class ClientMenu implements ShouldBeExit {
         controller.getFtpClient().replaceFile(controller.getFileName(), jsonStr);
     }
 
-    private List<Student> getListStudents(Controller controller) throws Exception {
+    public List<Student> getListStudents(Controller controller) throws Exception {
         String file = controller.getFtpClient().getFile(controller.getFileName());
         JSON json = new JSON();
         return json.fromJson(file);
