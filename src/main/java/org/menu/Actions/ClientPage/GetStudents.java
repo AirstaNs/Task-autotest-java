@@ -43,17 +43,9 @@ public class GetStudents extends Action {
      * @param students - List of students received from the server.
      */
     private void printStudentsToConsole(List<Student> students) {
+        System.out.println();
         System.out.println("Students list:");
-        students.stream()
-                .sorted()
-                .forEach(student -> System.out.println("--"+student));
+        students.stream().sorted().forEach(student -> System.out.println(">> " + student));
         System.out.println("End of list");
-       // students.forEach((student) -> System.out.printf("%d. %s%n", student.getId(), student.getName()));
-            /* TODO
-           for (int i = 0; i < students.size(); i++) {
-                Car car = students.get(i);
-                System.out.printf("%d. %s%n", i+1, car.getName());
-            }
-             */
     }
 }

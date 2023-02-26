@@ -30,8 +30,12 @@ public class GetAllStudents extends Action {
             System.err.println(e.getMessage());
         }
     }
-
+    /**
+     *  List students in alphabetical order.
+     * @param students - List of students received from the server.
+     */
     private void printStudentsToConsole(List<Student> students) {
+        System.out.println();
         System.out.println("Students list:");
         students.stream().sorted().forEach(student -> System.out.println(">> " + student));
         System.out.println("End of list");
