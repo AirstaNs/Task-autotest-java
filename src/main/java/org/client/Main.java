@@ -34,7 +34,8 @@ public class Main {
             String host = bufferedReader.readLine();
             String log = bufferedReader.readLine();
             String pass = bufferedReader.readLine();
-            FTPClient FTPClient = new FTPClient(host);
+            FTPConnection FTPConnection = new FTPConnection(host);
+            FTPClient FTPClient = new FTPClient(FTPConnection);
             FTPClient.login(log, pass);
             return FTPClient;
         } catch (IOException e) {
