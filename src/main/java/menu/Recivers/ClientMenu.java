@@ -38,7 +38,15 @@ public class ClientMenu implements ShouldBeExit {
     }
 
     public void addStudent(String name, Controller controller) {
-        //controller.getFtpClient().appendFile1();
+        try {
+            List<Student> listStudents = getListStudents(controller);
+            int other = 1;
+            int maxID = listStudents.stream().mapToInt(Student::getId).max().orElse(other);
+            listStudents.add(new Student(maxID,name));
+            uploadFile(controller,listStudents);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<Student> getStudents(Controller controller, String name) {
@@ -58,11 +66,13 @@ public class ClientMenu implements ShouldBeExit {
     public void removeStudent(Controller controller, int id) throws Exception {
         List<Student> listStudents = getListStudents(controller);
         boolean b = listStudents.removeIf(student -> student.getId() == id);
-        if (b) {
-            JSON json = new JSON();
-            String jsonStr = json.toJson(listStudents);
-            controller.getFtpClient().replaceFile(controller.getFileName(), jsonStr);
-        }
+        if (b) uploadFile(controller, listStudents);
+    }
+
+    private static void uploadFile(Controller controller, List<Student> listStudents) throws Exception {
+        JSON json = new JSON();
+        String jsonStr = json.toJson(listStudents);
+        controller.getFtpClient().replaceFile(controller.getFileName(), jsonStr);
     }
 
     private List<Student> getListStudents(Controller controller) throws Exception {
