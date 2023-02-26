@@ -5,7 +5,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 
@@ -34,20 +33,24 @@ public class FTPClient {
     }
 
 
-    private void downloadFile(String fileName, Socket dataSocket) throws IOException {
+    private String downloadFile(Socket dataSocket) throws IOException {
         Objects.requireNonNull(dataSocket, "not connected");
-        OutputStream fileOut = Files.newOutputStream(Paths.get("./files/" + fileName), StandardOpenOption.APPEND);
-        try (BufferedInputStream input = new BufferedInputStream(dataSocket.getInputStream()); BufferedOutputStream output = new BufferedOutputStream(fileOut)) {
+        String file = "";
+        //OutputStream fileOut = Files.newOutputStream(Paths.get("./files/" + fileName), StandardOpenOption.APPEND);
+        try (BufferedInputStream input = new BufferedInputStream(dataSocket.getInputStream());
+             ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[2048];
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {
                 output.write(buffer, 0, bytesRead);
             }
             output.flush();
+            file = output.toString();
         }
+        return file;
     }
 
-    public synchronized void getFile(String fileName) throws Exception {
+    public synchronized String getFile(String fileName) throws Exception {
         Socket socket1 = ftpConnection.setTransfer(fileName, Command.RETR);
 
         String response = ftpConnection.readResponse();
@@ -58,8 +61,9 @@ public class FTPClient {
             String messErr = response.startsWith("550") ? notFound : invalid;
             throw new RuntimeException(messErr);
         }
-        downloadFile(fileName, socket1);
+        String file = downloadFile(socket1);
         ftpConnection.readResponse();
+        return file;
     }
 
     public synchronized void appendFile1(String fileName) throws Exception {
