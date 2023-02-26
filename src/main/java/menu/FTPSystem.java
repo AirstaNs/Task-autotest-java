@@ -3,12 +3,14 @@ package menu;
 
 
 import menu.Recivers.ClientMenu;
+import org.client.FTPClient;
+import org.client.FTPConnection;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
  * CLIENT in Command pattern
- * A class that simulates the operation of the banking system. <br>
  * Where pages with menu items inherited from Action are displayed. <br>
  * Works until the user selects the "Exit" menu item. <br>
  */
@@ -27,35 +29,29 @@ public class FTPSystem {
      */
     public static ClientMenu Welcome_Menu;
 
-    /**
-     * The personal account page in the system is available after logging in.
-     */
- //   public static ManagerMenu Manager_Menu;
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * Launching the banking system, exposes the welcome page - loginMenu. <br>
-     * Works as long as {@link FTPSystem#isWork}  != false.
-     */
-    public void start(String nameDB) {
-        initSystem(nameDB);
 
-        controller.setPage(Page.welcomePage(Welcome_Menu));
+    public void start() {
+        initSystem();
 
+       // controller.setPage(Page.welcomePage(Welcome_Menu));
+        controller.setPage(Page.clientPage(new ClientMenu()));
 
         while (isWork) {
             menu(controller);
         }
     }
 
-    /**
-     * Initializing the Context, Controller and Menu Pages. <br>
-     * Setting the UID counter from the database.
-     * @param nameDB - the name of the database to be accessed
-     */
-    private void initSystem(String nameDB) {
-        if (true) throw new RuntimeException();
+
+    private void initSystem() {
+        try {
+            FTPSystem.controller = new Controller(new FTPClient(new FTPConnection(null)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //if (true) throw new RuntimeException();
         //        Scanner scanner = new Scanner(System.in);
         //        scanner.nex
         //        controller = new Controller();
@@ -63,10 +59,6 @@ public class FTPSystem {
         //        Manager_Menu = new ManagerMenu(controller);
     }
 
-    /**
-     * Prints menu items from the controller, sets actions, from the number read from the console
-     * @param controller {@link FTPSystem#controller}
-     */
     private void menu(Controller controller) {
         controller.printPage();
         try {

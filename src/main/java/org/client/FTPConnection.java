@@ -24,7 +24,7 @@ public class FTPConnection {
 
         this.setSocket(new Socket(host, DEFAULT_PORT));
         String response = readResponse();
-        if (!response.startsWith("220")) throw new RuntimeException("FTP server connection failed: " + response);
+        if (Objects.isNull(response)|| !response.startsWith("220")) throw new RuntimeException("FTP server connection failed:");
     }
     private synchronized void setSocket(Socket socket) throws IOException {
         this.socket = socket;

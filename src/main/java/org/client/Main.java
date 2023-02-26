@@ -1,6 +1,8 @@
 package org.client;
 
 
+import menu.FTPSystem;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,25 +10,27 @@ import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
-        FTPClient FTPClient = null;
-        try {
-            String name = "students.json";
-            FTPClient = getServer();
-            FTPClient.getFile(name);
-            FTPClient.appendFile1(name);
-            System.out.println(FTPClient.findFile(name));
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally
-        {
-            if (FTPClient != null) {
-                try {
-                    FTPClient.disconnect();
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        FTPSystem system = new FTPSystem();
+        system.start();
+//        FTPClient FTPClient = null;
+//        try {
+//            String name = "students.json";
+//            FTPClient = getServer();
+//          //  String file = FTPClient.getFile(name);
+//            FTPClient.replaceFile(name,"{\"students\":[{\"name\":\"Ivan\",\"surnam}");
+//            System.out.println(FTPClient.findFile(name));
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }finally
+//        {
+//            if (FTPClient != null) {
+//                try {
+//                    FTPClient.disconnect();
+//                } catch (IOException | InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     public static FTPClient getServer() {

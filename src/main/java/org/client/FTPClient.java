@@ -15,7 +15,7 @@ public class FTPClient {
         ftpConnection.disconnect();
     }
 
-    public FTPClient(FTPConnection ftpConnection) throws IOException {
+    public FTPClient(FTPConnection ftpConnection)  {
         this.ftpConnection = ftpConnection;
     }
 
