@@ -55,8 +55,14 @@ public class ClientMenu implements ShouldBeExit {
         return students;
     }
 
-    public void removeStudent(Controller controller, int id) {
-        //  controller.getFtpClient()
+    public void removeStudent(Controller controller, int id) throws Exception {
+        List<Student> listStudents = getListStudents(controller);
+        boolean b = listStudents.removeIf(student -> student.getId() == id);
+        if (b) {
+            JSON json = new JSON();
+            String jsonStr = json.toJson(listStudents);
+            controller.getFtpClient().replaceFile(controller.getFileName(), jsonStr);
+        }
     }
 
     private List<Student> getListStudents(Controller controller) throws Exception {

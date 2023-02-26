@@ -21,8 +21,10 @@ public class RemoveStudent extends Action {
             int id = getIdFromConsole();
             clientMenu.removeStudent(controller, id);
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.out.println("Invalid input id");
+        } catch (Exception e) {
+            System.out.println("Failed to remove student");
         }
     }
 
