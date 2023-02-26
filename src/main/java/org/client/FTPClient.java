@@ -6,15 +6,11 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class FTPClient {
-    private FTPConnection ftpConnection = null;
+    private final FTPConnection ftpConnection;
 
     public void disconnect() throws IOException, InterruptedException {
         ftpConnection.disconnect();

@@ -3,33 +3,42 @@ package menu.Actions.ClientPage;
 
 import menu.Actions.Action;
 import menu.Controller;
-import menu.Recivers.WelcomeMenu;
-import org.example.Student;
+import menu.Recivers.ClientMenu;
+import org.model.Student;
 
 
 import java.util.List;
+import java.util.Scanner;
 
 public class GetStudents extends Action {
-    private static final String title = "Получение списка студентов по имени";
+    private static final String title = "Getting students by name";
 
-    private final WelcomeMenu welcomeMenu;
+    private final ClientMenu clientMenu;
 
-    public GetStudents(int numberItem, WelcomeMenu welcomeMenu) {
+    public GetStudents(int numberItem, ClientMenu clientMenu) {
         super(title, numberItem);
-        this.welcomeMenu = welcomeMenu;
+        this.clientMenu = clientMenu;
 
     }
 
 
     @Override
     public void execute(Controller controller) {
-        List<Student> customerList = welcomeMenu.GetStudents(controller);
+            String nameFromConsole = getNameFromConsole();
+
+        List<Student> customerList = clientMenu.getStudents(controller,nameFromConsole);
 
         if (customerList.isEmpty()) {
-            System.out.println("The customer list is empty!");
+            System.out.println("The student list is empty!");
         } else {
             this.printComaniesToConsole(customerList);
         }
+
+    }
+
+    private String getNameFromConsole() {
+        System.out.println("Enter the student name:");
+        return new Scanner(System.in).nextLine();
     }
 
     private boolean isBackAction(int actionOrCompany) {

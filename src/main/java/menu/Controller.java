@@ -1,8 +1,9 @@
 package menu;
 
 
+import org.client.FTPClient;
 import menu.Actions.Action;
-import org.example.Server;
+
 
 import java.util.List;
 
@@ -13,15 +14,20 @@ import java.util.List;
  */
 
 public class Controller {
+    private final String fileName = "students.json";
 
-    private Server server;
-
-    public Controller(Server server) {
-        this.server = server;
+    public String getFileName() {
+        return fileName;
     }
 
-    public Server getServer() {
-        return server;
+    private FTPClient ftpClient;
+
+    public Controller(FTPClient ftpClient) {
+        this.ftpClient = ftpClient;
+    }
+
+    public FTPClient getFtpClient() {
+        return ftpClient;
     }
 
     /**

@@ -2,7 +2,7 @@ package menu.Recivers;
 
 
 import menu.Controller;
-import org.example.Student;
+import org.model.Student;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * A specific menu item and page, each method describes a specific action on the page.
  */
 
-public class WelcomeMenu implements ShouldBeExit {
+public class ClientMenu implements ShouldBeExit {
 
     /**
      * The action of signing in to an account. <br>
@@ -23,17 +23,23 @@ public class WelcomeMenu implements ShouldBeExit {
      * If the data is incorrect - DOES NOT redirect to the page of the Personal Account. <br>
      * if correct, redirects to the page of the Personal Account
      */
-    public void GetStudentById(Controller controller) {
-
+    public void getStudentById(Controller controller) {
+        try {
+            controller.getFtpClient().getFile(controller.getFileName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void createCustomer(String name, Controller controller) {
-     //   controller.getContext().customerDAO.create(name);
+    public void addStudent(String name, Controller controller) {
+        //controller.getFtpClient().appendFile1();
     }
 
-    public List<Student> GetStudents(Controller controller) {
-       // var customer = Main.download(controller.getServer());
-        //return customer.orElseThrow(() -> new RuntimeException("No Customer"));
+    public List<Student> getStudents(Controller controller, String name) {
+       // controller.getFtpClient().getFile(controller.getFileName());
         return null;
+    }
+    public void removeStudent(Controller controller, int id){
+      //  controller.getFtpClient()
     }
 }

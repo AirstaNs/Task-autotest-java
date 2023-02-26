@@ -3,22 +3,22 @@ package menu.Actions.ClientPage;
 
 import menu.Actions.Action;
 import menu.Controller;
-import menu.Recivers.WelcomeMenu;
+import menu.Recivers.ClientMenu;
 
 public class GetStudentById extends Action {
-    private static final String title = "Получение информации о студенте по id";
-    private final WelcomeMenu welcomeMenu;
+    private static final String title = "Getting a student by id";
+    private final ClientMenu clientMenu;
 
 
-    public GetStudentById(int numberItem, WelcomeMenu welcomeMenu) {
+    public GetStudentById(int numberItem, ClientMenu clientMenu) {
         super(title, numberItem);
-        this.welcomeMenu = welcomeMenu;
+        this.clientMenu = clientMenu;
 
     }
 
 
     @Override
     public void execute(Controller controller) {
-        welcomeMenu.GetStudentById(controller);
+        clientMenu.getStudentById(controller);
     }
 }

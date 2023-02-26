@@ -2,7 +2,7 @@ package menu;
 
 
 
-import menu.Recivers.WelcomeMenu;
+import menu.Recivers.ClientMenu;
 
 import java.util.Scanner;
 
@@ -12,7 +12,7 @@ import java.util.Scanner;
  * Where pages with menu items inherited from Action are displayed. <br>
  * Works until the user selects the "Exit" menu item. <br>
  */
-public class CarSystem {
+public class FTPSystem {
     /**
      * The flag denoting the operation of the system, if false - the program is terminated.
      */
@@ -25,7 +25,7 @@ public class CarSystem {
     /**
      * The initialization page is available without logging in. A specific menu item and page
      */
-    public static WelcomeMenu Welcome_Menu;
+    public static ClientMenu Welcome_Menu;
 
     /**
      * The personal account page in the system is available after logging in.
@@ -36,7 +36,7 @@ public class CarSystem {
 
     /**
      * Launching the banking system, exposes the welcome page - loginMenu. <br>
-     * Works as long as {@link CarSystem#isWork}  != false.
+     * Works as long as {@link FTPSystem#isWork}  != false.
      */
     public void start(String nameDB) {
         initSystem(nameDB);
@@ -65,7 +65,7 @@ public class CarSystem {
 
     /**
      * Prints menu items from the controller, sets actions, from the number read from the console
-     * @param controller {@link CarSystem#controller}
+     * @param controller {@link FTPSystem#controller}
      */
     private void menu(Controller controller) {
         controller.printPage();

@@ -1,7 +1,7 @@
 package org.parser;
 
 
-import org.client.Student;
+import org.model.Student;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

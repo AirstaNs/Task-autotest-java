@@ -2,11 +2,11 @@ package menu;
 
 
 import menu.Actions.Action;
-import menu.Actions.ClientPage.CreateStudent;
+import menu.Actions.ClientPage.AddStudent;
 import menu.Actions.ClientPage.Exit_Action;
 import menu.Actions.ClientPage.GetStudents;
 import menu.Actions.ClientPage.GetStudentById;
-import menu.Recivers.WelcomeMenu;
+import menu.Recivers.ClientMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,25 +17,27 @@ import java.util.List;
 public class Page {
     private static List<Action> welcome_page;
 
+    private static List<Action> client_Page;
+
     /**
-     * @param welcomeMenu {@link  menu.Recivers.WelcomeMenu}
+     * @param clientMenu {@link  ClientMenu}
      * @return Returns "Page" - a list of home page menu actions.
      */
-    public static List<Action> welcomePage(WelcomeMenu welcomeMenu) {
-        return welcome_page == null ? createClientPage(welcomeMenu) : welcome_page;
+    public static List<Action> welcomePage(ClientMenu clientMenu) {
+        return welcome_page == null ? createClientPage(clientMenu) : welcome_page;
     }
 
-    public static List<Action> clientPage(WelcomeMenu welcomeMenu) {
-        return welcome_page == null ? createClientPage(welcomeMenu) : welcome_page;
+    public static List<Action> clientPage(ClientMenu clientMenu) {
+        return welcome_page == null ? createClientPage(clientMenu) : welcome_page;
     }
 
 
-    private static List<Action> createClientPage(WelcomeMenu welcomeMenu) {
+    private static List<Action> createClientPage(ClientMenu clientMenu) {
         return new ArrayList<Action>() {{
-            add(new Exit_Action(this.size(), welcomeMenu));
-            add(new GetStudentById(this.size(), welcomeMenu));
-            add(new GetStudents(this.size(), welcomeMenu));
-            add(new CreateStudent(this.size(), welcomeMenu));
+            add(new Exit_Action(this.size(), clientMenu));
+            add(new GetStudentById(this.size(), clientMenu));
+            add(new GetStudents(this.size(), clientMenu));
+            add(new AddStudent(this.size(), clientMenu));
         }};
     }
 }
