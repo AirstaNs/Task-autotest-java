@@ -23,7 +23,7 @@ public class ClientMenu implements ShouldBeExit {
      * If the data is incorrect - DOES NOT redirect to the page of the Personal Account. <br>
      * if correct, redirects to the page of the Personal Account
      */
-    public void getStudentById(Controller controller) {
+    public void getStudentById(Controller controller, int id) {
         try {
             controller.getFtpClient().getFile(controller.getFileName());
         } catch (Exception e) {
