@@ -1,13 +1,11 @@
-package menu;
+package org.menu;
 
 
 
-import menu.Recivers.ClientMenu;
-import menu.Recivers.LoginMenu;
+import org.menu.Recivers.ClientMenu;
+import org.menu.Recivers.LoginMenu;
 import org.client.FTPClient;
-import org.client.FTPConnection;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /**

@@ -1,7 +1,7 @@
-package menu.Actions;
+package org.menu.Actions;
 
 
-import menu.Controller;
+import org.menu.Controller;
 
 // COMMAND
 public abstract class Action {

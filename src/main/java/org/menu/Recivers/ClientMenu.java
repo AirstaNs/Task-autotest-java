@@ -1,7 +1,7 @@
-package menu.Recivers;
+package org.menu.Recivers;
 
 
-import menu.Controller;
+import org.menu.Controller;
 import org.model.Student;
 import org.parser.JSON;
 

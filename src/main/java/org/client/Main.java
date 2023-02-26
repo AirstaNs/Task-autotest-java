@@ -1,7 +1,7 @@
 package org.client;
 
 
-import menu.FTPSystem;
+import org.menu.FTPSystem;
 
 import java.io.BufferedReader;
 import java.io.IOException;

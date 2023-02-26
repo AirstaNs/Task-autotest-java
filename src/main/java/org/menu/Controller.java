@@ -1,8 +1,8 @@
-package menu;
+package org.menu;
 
 
 import org.client.FTPClient;
-import menu.Actions.Action;
+import org.menu.Actions.Action;
 
 
 import java.util.List;

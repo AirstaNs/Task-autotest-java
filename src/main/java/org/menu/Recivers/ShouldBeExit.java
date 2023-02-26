@@ -1,7 +1,7 @@
-package menu.Recivers;
+package org.menu.Recivers;
 
 
-import menu.FTPSystem;
+import org.menu.FTPSystem;
 
 public interface ShouldBeExit {
      default void exit(){

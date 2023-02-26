@@ -1,8 +1,8 @@
-package menu.Actions.ClientPage;
+package org.menu.Actions.ClientPage;
 
-import menu.Actions.Action;
-import menu.Controller;
-import menu.Recivers.ClientMenu;
+import org.menu.Actions.Action;
+import org.menu.Controller;
+import org.menu.Recivers.ClientMenu;
 
 import java.util.Scanner;
 

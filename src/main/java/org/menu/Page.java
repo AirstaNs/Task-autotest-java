@@ -1,10 +1,10 @@
-package menu;
+package org.menu;
 
 
-import menu.Actions.Action;
+import org.menu.Actions.Action;
 import menu.Actions.ClientPage.*;
-import menu.Recivers.ClientMenu;
-import menu.Recivers.LoginMenu;
+import org.menu.Actions.ClientPage.*;
+import org.menu.Recivers.ClientMenu;
 
 import java.util.ArrayList;
 import java.util.List;

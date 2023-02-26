@@ -1,7 +1,6 @@
-package menu.Recivers;
+package org.menu.Recivers;
 
 
-import menu.Controller;
 import org.client.FTPClient;
 import org.client.FTPConnection;
 
