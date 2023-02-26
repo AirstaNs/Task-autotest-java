@@ -74,10 +74,18 @@ public class FTPClient {
 
     }
 
-    private void uploadFile(String localFilename, Socket dataSocket) throws IOException {
+    public synchronized void replaceFile(String remoteFile, String students) throws Exception {
+        Socket socket = ftpConnection.setTransfer(remoteFile, Command.STOR);
+        uploadFile(students, socket);
+        Thread.sleep(600);
+        ftpConnection.readResponse();
+
+    }
+
+    private void uploadFile(String students, Socket dataSocket) throws IOException {
         Objects.requireNonNull(dataSocket, "not connected");
-        try (BufferedOutputStream output = new BufferedOutputStream(dataSocket.getOutputStream()); BufferedInputStream input = new BufferedInputStream(Files.newInputStream(Paths.get(
-                "./files/" + localFilename)))) {
+        try (BufferedOutputStream output = new BufferedOutputStream(dataSocket.getOutputStream());
+             BufferedInputStream input = new BufferedInputStream(new ByteArrayInputStream(students.getBytes()))) {
             byte[] buffer = new byte[2048];
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {
