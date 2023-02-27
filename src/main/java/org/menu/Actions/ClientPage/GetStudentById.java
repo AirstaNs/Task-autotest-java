@@ -25,9 +25,9 @@ public class GetStudentById extends Action {
         try {
             int id = getIdFromConsole();
             Optional<Student> studentById = clientMenu.getStudentById(controller, id);
-            if(studentById.isPresent())
+            if(studentById.isPresent()) {
                 System.out.println(studentById.get());
-            else System.err.println("Student not found");
+            }else {System.err.println("Student not found");}
         } catch (Exception e) {
             System.err.println("Invalid input id");
         }

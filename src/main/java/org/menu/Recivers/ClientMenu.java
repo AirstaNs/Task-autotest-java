@@ -58,7 +58,7 @@ public class ClientMenu implements ShouldBeExit {
         if (b) {
             uploadFile(controller, listStudents);
             System.out.println("Student removed");
-        }else System.out.println("Student not found");
+        }else {System.err.println("Student not found");}
     }
 
     private static void uploadFile(Controller controller, List<Student> listStudents) throws Exception {

@@ -22,7 +22,7 @@ public class GetAllStudents extends Action {
         try {
             List<Student> studentList = clientMenu.getListStudents(controller);
             if (studentList.isEmpty()) {
-                System.out.println("Student not found");
+                System.err.println("Student not found");
             } else {
                 this.printStudentsToConsole(studentList);
             }

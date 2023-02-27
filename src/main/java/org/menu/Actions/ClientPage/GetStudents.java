@@ -27,7 +27,7 @@ public class GetStudents extends Action {
         List<Student> studentList = clientMenu.getStudents(controller, nameFromConsole);
 
         if (studentList.isEmpty()) {
-            System.out.println("Student not found");
+            System.err.println("Student not found");
         } else {
             this.printStudentsToConsole(studentList);
         }
